@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "lib": ["es2017"],
+    "removeComments": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "target": "es2017",
+    "outDir": "lib",
+    "module": "commonjs"
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules/**/*", ".vscode/**/*", "**/__tests__/*"]
+}
