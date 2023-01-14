@@ -9,28 +9,28 @@ Globals:
     MemorySize: 128
 
 Resources:
-  HelloWorldFunction:
+  LoginFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: lib/
-      Handler: app.lambdaHandler
+      Handler: app.login
       Runtime: nodejs16.x
       Architectures:
         - x86_64
       Events:
-        HelloWorld:
+        Login:
           Type: Api
           Properties:
-            Path: /hello
+            Path: /login
             Method: get
 
 Outputs:
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  LoginApi:
+    Description: "API Gateway endpoint URL for Prod stage for Login function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/login/"
+  LoginFunction:
+    Description: "Login Lambda Function ARN"
+    Value: !GetAtt LoginFunction.Arn
+  LoginFunctionIamRole:
+    Description: "Implicit IAM Role created for Login function"
+    Value: !GetAtt LoginFunctionRole.Arn

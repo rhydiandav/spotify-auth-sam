@@ -1,13 +1,9 @@
 const app = require("../app");
 
-describe("Tests index", function () {
-  it("verifies successful response", async () => {
-    const result = await app.lambdaHandler();
+describe("login", function () {
+  it("redirects to spotify login with the necessary parameters", async () => {
+    const result = await app.login();
 
-    expect(result.statusCode).toEqual(200);
-
-    let response = JSON.parse(result.body);
-
-    expect(response.message).toEqual("hello world");
+    expect(result.statusCode).toEqual(302);
   });
 });

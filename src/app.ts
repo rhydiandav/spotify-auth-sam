@@ -1,4 +1,4 @@
-exports.lambdaHandler = async () => {
+exports.login = async () => {
   try {
     return {
       statusCode: 200,
