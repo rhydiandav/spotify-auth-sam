@@ -5,5 +5,9 @@ describe("login", function () {
     const result = await app.login();
 
     expect(result.statusCode).toEqual(302);
+
+    expect(result.headers.Location).toEqual(
+      "https://accounts.spotify.com/authorize?"
+    );
   });
 });

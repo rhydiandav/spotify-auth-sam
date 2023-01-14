@@ -1,10 +1,10 @@
 exports.login = async () => {
   try {
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "hello world",
-      }),
+      statusCode: 302,
+      headers: {
+        Location: "https://accounts.spotify.com/authorize?",
+      },
     };
   } catch (err) {
     console.log(err);
