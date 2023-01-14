@@ -1,0 +1,16 @@
+{
+  "name": "spotify-auth",
+  "version": "1.0.0",
+  "description": "Service to get authentication token from Spotify",
+  "main": "src/app.js",
+  "repository": "https://github.com/rhydiandav/spotify-auth.git",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0"
+  },
+  "scripts": {
+    "test": "mocha src/tests/"
+  }
+}
