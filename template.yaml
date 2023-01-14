@@ -23,6 +23,20 @@ Resources:
           Properties:
             Path: /login
             Method: get
+  CallbackFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lib/
+      Handler: app.callback
+      Runtime: nodejs16.x
+      Architectures:
+        - x86_64
+      Events:
+        callback:
+          Type: Api
+          Properties:
+            Path: /callback
+            Method: get
 
 Outputs:
   LoginApi:
@@ -34,3 +48,12 @@ Outputs:
   LoginFunctionIamRole:
     Description: "Implicit IAM Role created for Login function"
     Value: !GetAtt LoginFunctionRole.Arn
+  CallbackApi:
+    Description: "API Gateway endpoint URL for Prod stage for Callback function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/callback/"
+  CallbackFunction:
+    Description: "Callback Lambda Function ARN"
+    Value: !GetAtt CallbackFunction.Arn
+  CallbackFunctionIamRole:
+    Description: "Implicit IAM Role created for Callback function"
+    Value: !GetAtt CallbackFunctionRole.Arn

@@ -1,3 +1,4 @@
+import { APIGatewayProxyEvent } from "aws-lambda";
 import { missingEnvVarsErrorMessage } from "./constants";
 
 exports.login = async () => {
@@ -21,4 +22,13 @@ exports.login = async () => {
       body: err.message,
     };
   }
+};
+
+exports.callback = async (event: APIGatewayProxyEvent) => {
+  console.log(event);
+
+  return {
+    statusCode: 302,
+    headers: { Location: "http://location.com" },
+  };
 };

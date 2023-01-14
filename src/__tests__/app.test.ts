@@ -5,7 +5,7 @@ const testClientID = "123";
 const testRedirectURI = "http://redirect.uri";
 const testScope = "scope";
 
-describe("login", function () {
+describe("login", () => {
   const defaultEnv = process.env;
 
   beforeEach(() => {
@@ -31,5 +31,13 @@ describe("login", function () {
 
     expect(result.statusCode).toEqual(500);
     expect(result.body).toEqual(missingEnvVarsErrorMessage);
+  });
+});
+
+describe("callback", () => {
+  it("returns redirect to client", async () => {
+    const result = await app.callback({});
+    expect(result.statusCode).toEqual(302);
+    expect(result.headers.Location).toEqual("http://location.com");
   });
 });
