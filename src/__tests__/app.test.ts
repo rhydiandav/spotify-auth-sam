@@ -1,4 +1,5 @@
 const app = require("../app");
+import { missingEnvVarsErrorMessage } from "../constants";
 
 const testClientID = "123";
 const testRedirectURI = "http://redirect.uri";
@@ -23,5 +24,12 @@ describe("login", function () {
     expect(result.headers.Location).toEqual(
       `https://accounts.spotify.com/authorize?client_id=${testClientID}&response_type=code&redirect_uri=${testRedirectURI}&scope=${testScope}`
     );
+  });
+
+  it("returns an error if environment variables are missing", async () => {
+    const result = await app.login();
+
+    expect(result.statusCode).toEqual(500);
+    expect(result.body).toEqual(missingEnvVarsErrorMessage);
   });
 });

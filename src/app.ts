@@ -1,7 +1,13 @@
+import { missingEnvVarsErrorMessage } from "./constants";
+
 exports.login = async () => {
   const { CLIENT_ID, REDIRECT_URI, SCOPE } = process.env;
 
   try {
+    if (!CLIENT_ID || !REDIRECT_URI || !SCOPE) {
+      throw new Error(missingEnvVarsErrorMessage);
+    }
+
     return {
       statusCode: 302,
       headers: {
@@ -10,6 +16,9 @@ exports.login = async () => {
     };
   } catch (err) {
     console.log(err);
-    return err;
+    return {
+      statusCode: 500,
+      body: err.message,
+    };
   }
 };
