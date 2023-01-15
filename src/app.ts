@@ -1,5 +1,8 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { missingEnvVarsErrorMessage } from "./constants";
+import {
+  missingEnvVarsErrorMessage,
+  missingCodeErrorMessage,
+} from "./constants";
 import { request } from "https";
 
 exports.login = async () => {
@@ -28,6 +31,11 @@ exports.login = async () => {
 exports.callback = async (event: APIGatewayProxyEvent) => {
   try {
     const { code } = event.queryStringParameters;
+
+    if (!code) {
+      throw new Error(missingCodeErrorMessage);
+    }
+
     const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, CLIENT_URI } = process.env;
 
     if (!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URI || !CLIENT_URI) {

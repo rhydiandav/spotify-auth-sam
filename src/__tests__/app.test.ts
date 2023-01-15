@@ -1,6 +1,9 @@
 import * as nock from "nock";
 const app = require("../app");
-import { missingEnvVarsErrorMessage } from "../constants";
+import {
+  missingCodeErrorMessage,
+  missingEnvVarsErrorMessage,
+} from "../constants";
 
 const testClientID = "123";
 const testRedirectURI = "http://redirect.uri";
@@ -91,5 +94,23 @@ describe("callback", () => {
 
     expect(result.statusCode).toEqual(500);
     expect(result.body).toEqual(missingEnvVarsErrorMessage);
+  });
+
+  it("returns an error if no code found in event", async () => {
+    process.env.CLIENT_ID = testClientID;
+    process.env.REDIRECT_URI = testRedirectURI;
+    process.env.CLIENT_URI = testClientUri;
+    process.env.CLIENT_SECRET = testSecret;
+
+    await mockSpotifyToken();
+
+    const result = await app.callback({
+      queryStringParameters: {
+        code: undefined,
+      },
+    });
+
+    expect(result.statusCode).toEqual(500);
+    expect(result.body).toEqual(missingCodeErrorMessage);
   });
 });
