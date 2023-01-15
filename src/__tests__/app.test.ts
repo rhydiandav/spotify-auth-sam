@@ -1,31 +1,18 @@
-import * as nock from "nock";
 const app = require("../app");
 import {
   missingCodeErrorMessage,
   missingEnvVarsErrorMessage,
 } from "../constants";
-
-const testClientID = "123";
-const testRedirectURI = "http://redirect.uri";
-const testScope = "scope";
-const testClientUri = "http://client.uri";
-const testSecret = "456";
-const testCode = "code";
-const testAccessToken = "access_token";
-const testRefreshToken = "refresh_token";
-
-const mockSpotifyToken = async () => {
-  nock("https://accounts.spotify.com")
-    .post("/api/token", {
-      grant_type: "authorization_code",
-      code: testCode,
-      redirect_uri: testRedirectURI,
-    })
-    .reply(200, {
-      access_token: testAccessToken,
-      refresh_token: testRefreshToken,
-    });
-};
+import {
+  testAccessToken,
+  testClientID,
+  testClientUri,
+  testCode,
+  testRedirectURI,
+  testRefreshToken,
+  testScope,
+} from "./constants";
+import { mockSpotifyToken, setCallbackEnvironmentVariables } from "./utils";
 
 describe("login", () => {
   const defaultEnv = process.env;
@@ -64,10 +51,7 @@ describe("callback", () => {
   });
 
   it("gets access and refresh tokens from spotify and returns redirect to client with tokens", async () => {
-    process.env.CLIENT_ID = testClientID;
-    process.env.REDIRECT_URI = testRedirectURI;
-    process.env.CLIENT_URI = testClientUri;
-    process.env.CLIENT_SECRET = testSecret;
+    setCallbackEnvironmentVariables();
 
     await mockSpotifyToken();
 
@@ -97,10 +81,7 @@ describe("callback", () => {
   });
 
   it("returns an error if no code found in event", async () => {
-    process.env.CLIENT_ID = testClientID;
-    process.env.REDIRECT_URI = testRedirectURI;
-    process.env.CLIENT_URI = testClientUri;
-    process.env.CLIENT_SECRET = testSecret;
+    setCallbackEnvironmentVariables();
 
     await mockSpotifyToken();
 
