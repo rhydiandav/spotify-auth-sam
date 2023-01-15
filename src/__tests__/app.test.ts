@@ -41,6 +41,12 @@ describe("login", () => {
 });
 
 describe("callback", () => {
+  const defaultEnv = process.env;
+
+  beforeEach(() => {
+    process.env = { ...defaultEnv };
+  });
+
   it("gets access and refresh tokens from spotify and returns redirect to client with tokens", async () => {
     process.env.CLIENT_ID = testClientID;
     process.env.REDIRECT_URI = testRedirectURI;
@@ -68,5 +74,27 @@ describe("callback", () => {
     expect(result.headers.Location).toEqual(
       `${testClientUri}?access_token=${testAccessToken}&refresh_token=${testRefreshToken}`
     );
+  });
+
+  it("returns an error if environment variables are missing", async () => {
+    nock("https://accounts.spotify.com")
+      .post("/api/token", {
+        grant_type: "authorization_code",
+        code: testCode,
+        redirect_uri: testRedirectURI,
+      })
+      .reply(200, {
+        access_token: testAccessToken,
+        refresh_token: testRefreshToken,
+      });
+
+    const result = await app.callback({
+      queryStringParameters: {
+        code: testCode,
+      },
+    });
+
+    expect(result.statusCode).toEqual(500);
+    expect(result.body).toEqual(missingEnvVarsErrorMessage);
   });
 });
