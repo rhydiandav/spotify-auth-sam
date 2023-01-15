@@ -1,5 +1,6 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { missingEnvVarsErrorMessage } from "./constants";
+import { request } from "https";
 
 exports.login = async () => {
   const { CLIENT_ID, REDIRECT_URI, SCOPE } = process.env;
@@ -25,10 +26,51 @@ exports.login = async () => {
 };
 
 exports.callback = async (event: APIGatewayProxyEvent) => {
-  console.log(event);
+  const { code } = event.queryStringParameters;
+  const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, CLIENT_URI } = process.env;
+
+  const data: string = await new Promise((resolve, reject) => {
+    const req = request(
+      {
+        hostname: "accounts.spotify.com",
+        path: "/api/token",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${Buffer.from(
+            `${CLIENT_ID}:${CLIENT_SECRET}`
+          ).toString("base64")}`,
+        },
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => {
+          data += chunk;
+        });
+        res.on("end", () => {
+          resolve(data);
+        });
+      }
+    );
+
+    req.on("error", (error) => {
+      reject(error);
+    });
+
+    req.write(
+      `grant_type=authorization_code&code=${code}&redirect_uri=${REDIRECT_URI}`
+    );
+    req.end();
+  });
+
+  const response = JSON.parse(data);
+
+  const { access_token, refresh_token } = response;
 
   return {
     statusCode: 302,
-    headers: { Location: "http://location.com" },
+    headers: {
+      Location: `${CLIENT_URI}?access_token=${access_token}&refresh_token=${refresh_token}`,
+    },
   };
 };

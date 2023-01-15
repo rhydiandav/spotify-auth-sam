@@ -1,9 +1,15 @@
+import * as nock from "nock";
 const app = require("../app");
 import { missingEnvVarsErrorMessage } from "../constants";
 
 const testClientID = "123";
 const testRedirectURI = "http://redirect.uri";
 const testScope = "scope";
+const testClientUri = "http://client.uri";
+const testSecret = "456";
+const testCode = "code";
+const testAccessToken = "access_token";
+const testRefreshToken = "refresh_token";
 
 describe("login", () => {
   const defaultEnv = process.env;
@@ -35,9 +41,32 @@ describe("login", () => {
 });
 
 describe("callback", () => {
-  it("returns redirect to client", async () => {
-    const result = await app.callback({});
+  it("gets access and refresh tokens from spotify and returns redirect to client with tokens", async () => {
+    process.env.CLIENT_ID = testClientID;
+    process.env.REDIRECT_URI = testRedirectURI;
+    process.env.CLIENT_URI = testClientUri;
+    process.env.CLIENT_SECRET = testSecret;
+
+    nock("https://accounts.spotify.com")
+      .post("/api/token", {
+        grant_type: "authorization_code",
+        code: testCode,
+        redirect_uri: testRedirectURI,
+      })
+      .reply(200, {
+        access_token: testAccessToken,
+        refresh_token: testRefreshToken,
+      });
+
+    const result = await app.callback({
+      queryStringParameters: {
+        code: testCode,
+      },
+    });
+
     expect(result.statusCode).toEqual(302);
-    expect(result.headers.Location).toEqual("http://location.com");
+    expect(result.headers.Location).toEqual(
+      `${testClientUri}?access_token=${testAccessToken}&refresh_token=${testRefreshToken}`
+    );
   });
 });
