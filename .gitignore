@@ -209,3 +209,4 @@ $RECYCLE.BIN/
 
 lib/
 dist/
+samconfig.toml
