@@ -11,6 +11,19 @@ const testCode = "code";
 const testAccessToken = "access_token";
 const testRefreshToken = "refresh_token";
 
+const mockSpotifyToken = async () => {
+  nock("https://accounts.spotify.com")
+    .post("/api/token", {
+      grant_type: "authorization_code",
+      code: testCode,
+      redirect_uri: testRedirectURI,
+    })
+    .reply(200, {
+      access_token: testAccessToken,
+      refresh_token: testRefreshToken,
+    });
+};
+
 describe("login", () => {
   const defaultEnv = process.env;
 
@@ -53,16 +66,7 @@ describe("callback", () => {
     process.env.CLIENT_URI = testClientUri;
     process.env.CLIENT_SECRET = testSecret;
 
-    nock("https://accounts.spotify.com")
-      .post("/api/token", {
-        grant_type: "authorization_code",
-        code: testCode,
-        redirect_uri: testRedirectURI,
-      })
-      .reply(200, {
-        access_token: testAccessToken,
-        refresh_token: testRefreshToken,
-      });
+    await mockSpotifyToken();
 
     const result = await app.callback({
       queryStringParameters: {
@@ -77,16 +81,7 @@ describe("callback", () => {
   });
 
   it("returns an error if environment variables are missing", async () => {
-    nock("https://accounts.spotify.com")
-      .post("/api/token", {
-        grant_type: "authorization_code",
-        code: testCode,
-        redirect_uri: testRedirectURI,
-      })
-      .reply(200, {
-        access_token: testAccessToken,
-        refresh_token: testRefreshToken,
-      });
+    await mockSpotifyToken();
 
     const result = await app.callback({
       queryStringParameters: {
