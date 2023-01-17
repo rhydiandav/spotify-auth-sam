@@ -12,7 +12,7 @@ Resources:
   LoginFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lib/
+      CodeUri: src/
       Handler: app.login
       Runtime: nodejs16.x
       Architectures:
@@ -26,7 +26,7 @@ Resources:
   CallbackFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: lib/
+      CodeUri: src/
       Handler: app.callback
       Runtime: nodejs16.x
       Architectures:
